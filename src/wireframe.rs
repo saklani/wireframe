@@ -11,7 +11,7 @@
 //! Each element draws itself at a position and width and returns its height;
 //! `card`, `row` and `col` place their children.
 
-use crate::paint::{Corners, Layer, Painter, Stroke};
+use crate::paint::{Painter, Stroke};
 use crate::text::{block_width, truncate, width, wrap, Fit};
 use crate::text::{strip_comment, unquote};
 use crate::Error;
@@ -271,7 +271,7 @@ fn hanging(p: &mut Painter, (x, y): (i64, i64), w: i64, marker: &str, text: &str
 /// A horizontal line; `edge` extends it into a surrounding frame's border.
 fn rule(p: &mut Painter, x: i64, y: i64, w: i64, edge: i64) {
     let net = p.net();
-    p.line(&[(x - edge, y), (x + w - 1 + edge, y)], net, Stroke::LIGHT, Layer::Main);
+    p.line(&[(x - edge, y), (x + w - 1 + edge, y)], net, Stroke::Light);
 }
 
 /// A box `h` tall with `text` on its middle row, `inset` in from each side.
@@ -284,7 +284,7 @@ fn boxed(
     inset: i64,
     align: Align,
 ) -> i64 {
-    p.rect((x, y), (w, h), stroke, Corners::Square, Layer::Main);
+    p.rect((x, y), (w, h), stroke);
     put(p, x + inset, y + h / 2, w - 2 * inset, text, align);
     h
 }
@@ -296,7 +296,7 @@ fn draw_all(p: &mut Painter, children: &[El], (x, y): (i64, i64), w: i64, edge: 
 /// A bordered block: children inside, `title` on the top edge.
 fn frame(p: &mut Painter, title: &str, children: &[El], (x, y): (i64, i64), w: i64) -> i64 {
     let h = draw_all(p, children, (x + 2, y + 1), w - 4, 2) + 2;
-    p.rect((x, y), (w, h), Stroke::LIGHT, Corners::Square, Layer::Main);
+    p.rect((x, y), (w, h), Stroke::Light);
     if !title.is_empty() {
         p.text(x + 2, y, &format!(" {} ", truncate(title, w - 6)));
     }
@@ -335,19 +335,19 @@ fn draw(p: &mut Painter, el: &El, (x, y): (i64, i64), w: i64, hint: Align, edge:
         El::Input { label, value, select } => {
             let top = if label.is_empty() { 0 } else { para(p, (x, y), w, label, Align::Left) };
             let room = w - if *select { 2 } else { 0 };
-            boxed(p, (x, y + top), (w, 3), Stroke::LIGHT, &truncate(value, room - 4), 2, Align::Left);
+            boxed(p, (x, y + top), (w, 3), Stroke::Light, &truncate(value, room - 4), 2, Align::Left);
             if *select {
                 p.symbol(x + w - 3, y + top + 1, '▾');
             }
             top + 3
         }
-        El::Button(label) => boxed(p, (x, y), (w, 3), Stroke::HEAVY, label, 1, Align::Center),
+        El::Button(label) => boxed(p, (x, y), (w, 3), Stroke::Heavy, label, 1, Align::Center),
         El::Image(caption) => {
             for (r, c) in (1..4).flat_map(|r| (1..w - 1).map(move |c| (r, c))) {
                 p.symbol(x + c, y + r, '░');
             }
             let caption = if caption.is_empty() { String::new() } else { format!(" {caption} ") };
-            boxed(p, (x, y), (w, 5), Stroke::LIGHT, &caption, 1, Align::Center)
+            boxed(p, (x, y), (w, 5), Stroke::Light, &caption, 1, Align::Center)
         }
         El::Card { title, children } => frame(p, title, children, (x, y), w),
         // A column fills its parent's width, so its dividers still reach the frame.
@@ -386,7 +386,7 @@ fn draw(p: &mut Painter, el: &El, (x, y): (i64, i64), w: i64, hint: Align, edge:
                 if Some(i) == *active && tw > 0 {
                     let net = p.net();
                     let start = cx + (cw - tw) / 2;
-                    p.line(&[(start, y + 1), (start + tw - 1, y + 1)], net, Stroke::HEAVY, Layer::Main);
+                    p.line(&[(start, y + 1), (start + tw - 1, y + 1)], net, Stroke::Heavy);
                 }
                 cx += cw;
             }
