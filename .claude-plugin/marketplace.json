@@ -1,0 +1,6 @@
+{
+  "name": "wireframe",
+  "owner": { "name": "saklani" },
+  "description": "wireframe: terminal UI mockups for Claude Code",
+  "plugins": [{ "name": "wireframe", "source": "./plugin" }]
+}

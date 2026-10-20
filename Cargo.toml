@@ -16,3 +16,10 @@ opt-level = 3
 overflow-checks = true
 lto = true
 strip = true
+
+[lints.clippy]
+must_use_candidate = "warn"
+missing_errors_doc = "warn"
+needless_pass_by_value = "warn"
+needless_for_each = "warn"
+single_match_else = "warn"

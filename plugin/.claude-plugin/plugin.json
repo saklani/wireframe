@@ -1,0 +1,7 @@
+{
+  "name": "wireframe",
+  "description": "UI screen mockups in the terminal: a skill that sketches them with wireframe, and a mod that shows each mockup in full",
+  "author": { "name": "saklani" },
+  "repository": "https://github.com/saklani/wireframe",
+  "license": "MIT"
+}
